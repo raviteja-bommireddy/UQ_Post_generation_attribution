@@ -1,0 +1,9 @@
+openai
+python-dotenv
+sentence-transformers
+scikit-learn
+numpy
+pandas
+rank-bm25
+datasets
+tqdm
