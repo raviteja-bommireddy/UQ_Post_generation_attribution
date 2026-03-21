@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>UQ in Post-Generation Attribution — Research Framework</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --ink: #111317;
+            --paper: #ffffff;
+            --bg: #f6f5f1;
+            --dim: #5a5a6e;
+            --muted: #9898a8;
+            --rule: #e2e1dc;
+            --light: #f0efe9;
+
+            --A: #1d4ed8;
+            --A-s: #dbeafe;
+            --A-b: #93c5fd;
+            --R: #047857;
+            --R-s: #d1fae5;
+            --R-b: #6ee7b7;
+            --H: #b91c1c;
+            --H-s: #fee2e2;
+            --H-b: #fca5a5;
+            --C: #6d28d9;
+            --C-s: #ede9fe;
+            --C-b: #c4b5fd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13.5px;
+            line-height: 1.7;
+        }
+
+        /* ── LAYOUT ── */
+        .wrap {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 56px 40px 100px;
+        }
+
+        /* ── HEADER ── */
+        .doc-header {
+            border-bottom: 2px solid var(--ink);
+            padding-bottom: 28px;
+            margin-bottom: 56px;
+        }
+
+        .eyebrow {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        .doc-header h1 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(28px, 4vw, 44px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 18px;
+            letter-spacing: -.02em;
+        }
+
+        .doc-header h1 span {
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        .doc-lede {
+            font-size: 13px;
+            color: var(--dim);
+            max-width: 640px;
+            line-height: 1.75;
+            border-left: 2px solid var(--rule);
+            padding-left: 14px;
+        }
+
+        .meta-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .meta-chip {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 4px;
+            background: var(--light);
+            border: 1px solid var(--rule);
+            color: var(--dim);
+        }
+
+        /* ── SECTION ── */
+        .sec {
+            margin-bottom: 60px;
+        }
+
+        .sec-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 9.5px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sec-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--rule);
+        }
+
+        .sec h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            letter-spacing: -.01em;
+        }
+
+        p {
+            font-size: 13px;
+            color: var(--dim);
+            margin-bottom: 10px;
+            line-height: 1.75;
+        }
+
+        p strong {
+            color: var(--ink);
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ── CALLOUT ── */
+        .callout {
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 12.5px;
+            line-height: 1.7;
+        }
+
+        .callout strong {
+            font-weight: 600;
+        }
+
+        .call-A {
+            background: var(--A-s);
+            border-left: 3px solid var(--A);
+            color: #1e3a8a;
+        }
+
+        .call-R {
+            background: var(--R-s);
+            border-left: 3px solid var(--R);
+            color: #064e3b;
+        }
+
+        .call-H {
+            background: var(--H-s);
+            border-left: 3px solid var(--H);
+            color: #7f1d1d;
+        }
+
+        .call-C {
+            background: var(--C-s);
+            border-left: 3px solid var(--C);
+            color: #4c1d95;
+        }
+
+        .call-n {
+            background: var(--light);
+            border-left: 3px solid var(--muted);
+            color: var(--dim);
+        }
+
+        .call-gold {
+            background: #fffbeb;
+            border-left: 3px solid #d97706;
+            color: #78350f;
+        }
+
+        .call-q {
+            background: #f8f8f8;
+            border-left: 3px solid #94a3b8;
+            color: #475569;
+            font-style: italic;
+        }
+
+        /* ── WHAT WE ARE / NOT ── */
+        .scope-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .scope-card {
+            border-radius: 6px;
+            padding: 14px 16px;
+            font-size: 12.5px;
+            line-height: 1.65;
+        }
+
+        .scope-yes {
+            background: #f0fdf4;
+            border: 1px solid var(--R-b);
+        }
+
+        .scope-no {
+            background: var(--H-s);
+            border: 1px solid var(--H-b);
+        }
+
+        .scope-card .label {
+            font-family: 'DM Mono', monospace;
+            font-size: 9.5px;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .scope-yes .label {
+            color: var(--R);
+        }
+
+        .scope-no .label {
+            color: var(--H);
+        }
+
+        .scope-card ul {
+            padding-left: 14px;
+            font-size: 12px;
+            color: var(--dim);
+        }
+
+        .scope-card ul li {
+            margin-bottom: 4px;
+        }
+
+        /* ── 4-STAGE FLOW ── */
+        .stage-flow {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .stage-row {
+            display: grid;
+            grid-template-columns: 180px 24px 1fr;
+            align-items: center;
+            gap: 0;
+            min-height: 52px;
+        }
+
+        .stage-pill {
+            padding: 10px 14px;
+            border-radius: 6px 0 0 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .stage-pill .num {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            letter-spacing: .1em;
+            opacity: .7;
+        }
+
+        .stage-arrow {
+            background: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            height: 100%;
+        }
+
+        .stage-desc {
+            padding: 10px 16px;
+            border-radius: 0 6px 6px 0;
+            font-size: 12px;
+            color: var(--dim);
+            line-height: 1.55;
+        }
+
+        .st-A .stage-pill {
+            background: var(--A-s);
+            color: var(--A);
+        }
+
+        .st-A .stage-desc {
+            background: #f5f9ff;
+            border: 1px solid var(--A-b);
+            border-left: none;
+        }
+
+        .st-R .stage-pill {
+            background: var(--R-s);
+            color: var(--R);
+        }
+
+        .st-R .stage-desc {
+            background: #f2fdf8;
+            border: 1px solid var(--R-b);
+            border-left: none;
+        }
+
+        .st-H .stage-pill {
+            background: var(--H-s);
+            color: var(--H);
+        }
+
+        .st-H .stage-desc {
+            background: #fff8f8;
+            border: 1px solid var(--H-b);
+            border-left: none;
+        }
+
+        .st-C .stage-pill {
+            background: var(--C-s);
+            color: var(--C);
+        }
+
+        .st-C .stage-desc {
+            background: #faf7ff;
+            border: 1px solid var(--C-b);
+            border-left: none;
+        }
+
+        .flow-connector {
+            height: 8px;
+            margin-left: 88px;
+            border-left: 2px dashed var(--rule);
+        }
+
+        /* ── PERTURBATION TABLE ── */
+        .pert-section {
+            margin: 20px 0;
+        }
+
+        .pert-cat-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            padding: 10px 14px;
+            border-radius: 6px;
+        }
+
+        .pch-A {
+            background: var(--A-s);
+        }
+
+        .pch-R {
+            background: var(--R-s);
+        }
+
+        .pch-H {
+            background: var(--H-s);
+        }
+
+        .pch-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 9.5px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .pch-A .pch-label {
+            color: var(--A);
+        }
+
+        .pch-R .pch-label {
+            color: var(--R);
+        }
+
+        .pch-H .pch-label {
+            color: var(--H);
+        }
+
+        .pch-title {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--ink);
+        }
+
+        .pch-count {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            margin-left: auto;
+        }
+
+        .pert-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+
+        .pert-table th {
+            font-family: 'DM Mono', monospace;
+            font-size: 9.5px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 7px 12px;
+            background: var(--light);
+            border: 1px solid var(--rule);
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .pert-table td {
+            padding: 8px 12px;
+            border: 1px solid var(--rule);
+            font-size: 12px;
+            color: var(--dim);
+            vertical-align: top;
+            background: var(--paper);
+        }
+
+        .pert-table tr:hover td {
+            background: var(--light);
+        }
+
+        .pert-name {
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        .pert-ex-orig {
+            color: var(--muted);
+            font-size: 11px;
+            font-style: italic;
+        }
+
+        .pert-ex-mod {
+            color: var(--ink);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .pert-uq {
+            display: inline-block;
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 3px;
+            letter-spacing: .06em;
+            font-weight: 600;
+        }
+
+        .uq-A {
+            background: var(--A-s);
+            color: var(--A);
+        }
+
+        .uq-R {
+            background: var(--R-s);
+            color: var(--R);
+        }
+
+        .uq-H {
+            background: var(--H-s);
+            color: var(--H);
+        }
+
+        /* ── PIPELINE DIAGRAM ── */
+        .pipeline-diagram {
+            background: var(--ink);
+            border-radius: 8px;
+            padding: 24px 28px;
+            margin: 20px 0;
+            color: #e4e4e7;
+            font-family: 'DM Mono', monospace;
+            font-size: 11.5px;
+        }
+
+        .pipe-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
+        .pipe-box {
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .pipe-arr {
+            color: #52525b;
+            font-size: 13px;
+        }
+
+        .pipe-note {
+            color: #71717a;
+            font-size: 10.5px;
+            font-style: italic;
+        }
+
+        /* ── CODE BLOCK ── */
+        .code {
+            background: #1c1c22;
+            color: #d4d4d4;
+            border-radius: 6px;
+            padding: 16px 18px;
+            font-family: 'DM Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.9;
+            margin: 12px 0;
+            overflow-x: auto;
+        }
+
+        .code .cm {
+            color: #52525b;
+        }
+
+        .code .kw {
+            color: #93c5fd;
+        }
+
+        .code .nm {
+            color: #86efac;
+        }
+
+        .code .hl {
+            color: #fcd34d;
+        }
+
+        /* ── COMPARISON TABLE ── */
+        .cmp {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+        }
+
+        .cmp th {
+            background: var(--ink);
+            color: #e4e4e7;
+            font-family: 'DM Mono', monospace;
+            font-size: 9.5px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            padding: 9px 13px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .cmp td {
+            padding: 9px 13px;
+            border: 1px solid var(--rule);
+            font-size: 12px;
+            color: var(--dim);
+            background: var(--paper);
+            vertical-align: top;
+        }
+
+        .cmp tr:hover td {
+            background: var(--light);
+        }
+
+        .tick {
+            color: var(--R);
+            font-weight: 700;
+        }
+
+        .cross {
+            color: var(--H);
+            font-weight: 700;
+        }
+
+        .best-row td {
+            background: #f0fdf4;
+        }
+
+        /* ── FORMULA ── */
+        .formula {
+            background: var(--ink);
+            color: #e4e4e7;
+            border-radius: 8px;
+            padding: 22px 26px;
+            font-family: 'DM Mono', monospace;
+            font-size: 12.5px;
+            line-height: 2.2;
+            margin: 16px 0;
+        }
+
+        .formula .kw {
+            color: #93c5fd;
+        }
+
+        .formula .nm {
+            color: #86efac;
+        }
+
+        .formula .hl {
+            color: #fcd34d;
+        }
+
+        .formula .cm {
+            color: #52525b;
+            font-size: 10.5px;
+        }
+
+        .formula .user {
+            color: #fcd34d;
+            font-style: italic;
+        }
+
+        /* ── UQ STAGE HEADER ── */
+        .uq-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .uq-badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .uq-A {
+            background: var(--A-s);
+            color: var(--A);
+            border: 1px solid var(--A-b);
+        }
+
+        .uq-R {
+            background: var(--R-s);
+            color: var(--R);
+            border: 1px solid var(--R-b);
+        }
+
+        .uq-H {
+            background: var(--H-s);
+            color: var(--H);
+            border: 1px solid var(--H-b);
+        }
+
+        .uq-C {
+            background: var(--C-s);
+            color: var(--C);
+            border: 1px solid var(--C-b);
+        }
+
+        .uq-title {
+            font-family: 'Fraunces', serif;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        /* ── TECHNIQUE BOX ── */
+        .tech-box {
+            border: 1px solid var(--rule);
+            border-radius: 6px;
+            padding: 16px 18px;
+            margin: 12px 0;
+            background: var(--paper);
+        }
+
+        .tech-box h4 {
+            font-size: 13.5px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--ink);
+        }
+
+        .verdict {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'DM Mono', monospace;
+            letter-spacing: .05em;
+        }
+
+        .v-best {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .v-good {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .v-open {
+            background: var(--C-s);
+            color: var(--C);
+        }
+
+        /* ── COVERAGE TABLE ── */
+        .cov-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+        }
+
+        .cov-table th {
+            background: var(--ink);
+            color: #e4e4e7;
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            padding: 9px 12px;
+            text-align: left;
+        }
+
+        .cov-table td {
+            padding: 9px 12px;
+            border: 1px solid var(--rule);
+            font-size: 12px;
+            vertical-align: top;
+        }
+
+        .cov-table .stage-cell {
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .row-A td {
+            background: var(--A-s);
+        }
+
+        .row-A .stage-cell {
+            color: var(--A);
+        }
+
+        .row-R td {
+            background: var(--R-s);
+        }
+
+        .row-R .stage-cell {
+            color: var(--R);
+        }
+
+        .row-H td {
+            background: var(--H-s);
+        }
+
+        .row-H .stage-cell {
+            color: var(--H);
+        }
+
+        .row-C td {
+            background: var(--C-s);
+        }
+
+        .row-C .stage-cell {
+            color: var(--C);
+        }
+
+        .row-X td {
+            background: #fffbeb;
+        }
+
+        .row-X .stage-cell {
+            color: #92400e;
+        }
+
+        .cov-icon {
+            font-size: 14px;
+        }
+
+        /* ── INLINE CODE ── */
+        code {
+            font-family: 'DM Mono', monospace;
+            background: var(--light);
+            border: 1px solid var(--rule);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 11.5px;
+            color: var(--ink);
+        }
+
+        /* ── QUESTION MARK BOX ── */
+        .qmark-box {
+            border: 2px dashed var(--C-b);
+            border-radius: 8px;
+            padding: 18px 22px;
+            margin: 16px 0;
+            background: var(--C-s);
+        }
+
+        .qmark-box .qmark-head {
+            font-family: 'DM Mono', monospace;
+            font-size: 9.5px;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: var(--C);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .qmark-box p {
+            color: #4c1d95;
+            font-size: 12.5px;
+            margin-bottom: 6px;
+        }
+
+        /* ── DIVIDER ── */
+        .divider {
+            height: 1px;
+            background: var(--rule);
+            margin: 48px 0;
+        }
+
+        /* ── FOOTNOTE ── */
+        .footnote {
+            font-size: 11.5px;
+            color: var(--muted);
+            border-top: 1px solid var(--rule);
+            padding-top: 10px;
+            margin-top: 14px;
+            font-family: 'DM Mono', monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+
+        <!-- ══════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════ -->
+        <div class="doc-header">
+            <div class="eyebrow">Research Framework · Draft · For Mentor Review</div>
+            <h1>Uncertainty Quantification in<br /><span>Post-Generation Attribution</span></h1>
+            <p class="doc-lede">
+                A structured methodology for measuring how stable evidence attribution is for LLM-generated factual
+                claims — across four qualitatively distinct stages of the attribution pipeline.
+            </p>
+            <div class="meta-row">
+                <span class="meta-chip">Dataset: ASQA · 17 questions</span>
+                <span class="meta-chip">LLM: llama-3.1-70b · OpenRouter</span>
+                <span class="meta-chip">Retrieval: BM25 / Dense / Hybrid</span>
+                <span class="meta-chip">NLI: cross-encoder/nli-deberta-v3-base</span>
+                <span class="meta-chip">Perturbations: 12 per claim</span>
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+     SECTION 1: FRAMEWORK OVERVIEW
+══════════════════════════════════════════════════ -->
+        <div class="sec">
+            <div class="sec-label">Section 01</div>
+            <h2>Framework Overview</h2>
+
+            <p>
+                <strong>UQ in Post-Generation Attribution</strong> is a measurement framework. We identify specific
+                stages of the attribution pipeline and probe each for uncertainty.
+            </p>
+            <p>
+                Attribution uncertainty does not mean the claim is wrong. It means: <strong>how stably and consistently
+                    is this claim backed by retrievable evidence?</strong>
+            </p>
+            <p>
+                We isolate four stages — <strong>Attribution, Retrieval, Hallucination (Content), and Claim
+                    Extraction</strong> — and design targeted signals for each.
+            </p>
+
+            <div class="scope-grid">
+                <div class="scope-card scope-yes">
+                    <span class="label">We Are Measuring</span>
+                    <ul>
+                        <li>Stability of evidence entailment across perturbations</li>
+                        <li>Consistency of retrieved document sets</li>
+                        <li>Whether added specifics are grounded in the corpus</li>
+                        <li>Consistency of claim decomposition across runs</li>
+                    </ul>
+                </div>
+                <div class="scope-card scope-no">
+                    <span class="label">We Are NOT Measuring</span>
+                    <ul>
+                        <li>Correctness or truthfulness of the claim</li>
+                        <li>Factuality verified against ground-truth</li>
+                        <li>Model-internal token probabilities</li>
+                        <li>Corpus completeness or quality</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="callout call-n">
+                <strong>Why this is currently feasible:</strong> All components — BM25 retrieval, cross-encoder NLI, RBO
+                computation — operate in a fully black-box setting. No model internals are needed. The pipeline runs on
+                open datasets (ASQA, ALCE Wikipedia) with publicly available models.
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+     SECTION 2: IDENTIFIED PROBLEMS & PIPELINE STAGES
+══════════════════════════════════════════════════ -->
+        <div class="sec">
+            <div class="sec-label">Section 02</div>
+            <h2>Identified Problems & Four UQ Stages</h2>
+
+            <p>
+                Post-generation attribution has no single point of failure. Uncertainty can enter at any stage. We map
+                each to a distinct signal.
+            </p>
+
+            <div class="stage-flow">
+
+                <div class="stage-row st-A">
+                    <div class="stage-pill">
+                        <span class="num">UQ₁</span>
+                        Attribution
+                    </div>
+                    <div class="stage-arrow">→</div>
+                    <div class="stage-desc">
+                        <strong>Problem:</strong> Retrieved docs do not consistently entail the claim across surface
+                        variants. <strong>Signal:</strong> NLI entailment variance.
+                    </div>
+                </div>
+                <div class="flow-connector"></div>
+
+                <div class="stage-row st-R">
+                    <div class="stage-pill">
+                        <span class="num">UQ₂</span>
+                        Retrieval
+                    </div>
+                    <div class="stage-arrow">→</div>
+                    <div class="stage-desc">
+                        <strong>Problem:</strong> Different queries retrieve different documents — the evidence anchor
+                        is phrase-dependent. <strong>Signal:</strong> Rank-Biased Overlap instability.
+                    </div>
+                </div>
+                <div class="flow-connector"></div>
+
+                <div class="stage-row st-H">
+                    <div class="stage-pill">
+                        <span class="num">UQ₃</span>
+                        Hallucination (Content)
+                    </div>
+                    <div class="stage-arrow">→</div>
+                    <div class="stage-desc">
+                        <strong>Problem:</strong> LLM generates specific details not grounded in any retrievable
+                        passage. <strong>Signal:</strong> Retrieval Anchoring Bias + Specification Entailment Gap.
+                    </div>
+                </div>
+                <div class="flow-connector"></div>
+
+                <div class="stage-row st-C">
+                    <div class="stage-pill">
+                        <span class="num">UQ₄</span>
+                        Claim Extraction
+                    </div>
+                    <div class="stage-arrow">→</div>
+                    <div class="stage-desc">
+                        <strong>Problem:</strong> Atomic decomposition of the answer is unstable — different runs
+                        produce different claim boundaries. <strong>Signal:</strong> Under investigation.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+     SECTION 3: PERTURBATION TAXONOMY
+══════════════════════════════════════════════════ -->
+        <div class="sec">
+            <div class="sec-label">Section 03</div>
+            <h2>Perturbation Taxonomy</h2>
+
+            <p>
+                Perturbations are the core stress-test mechanism. Each category is designed to probe a specific UQ
+                stage. Perturbations are applied to every atomic claim extracted from the LLM answer.
+            </p>
+
+            <div class="callout call-n">
+                <strong>Reference claim used in all examples:</strong> <em>"Einstein was awarded the Nobel Prize in
+                    Physics in 1921 for the photoelectric effect."</em>
+            </div>
+
+            <!-- C-1 + C-2: Attribution -->
+            <div class="pert-section">
+                <div class="pert-cat-header pch-A">
+                    <div>
+                        <div class="pch-label">Category 1 · Attribution UQ₁</div>
+                        <div class="pch-title">Preserve Attribution — meaning-preserving surface changes</div>
+                    </div>
+                    <span class="pch-count">× 2</span>
+                </div>
+                <table class="pert-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Original → Modified</th>
+                            <th>UQ Signal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="pert-name">P1 · Paraphrase</td>
+                            <td>
+                                <div class="pert-ex-orig">Einstein was awarded the Nobel Prize in Physics in 1921…</div>
+                                <div class="pert-ex-mod">→ The 1921 Nobel Prize in Physics went to Albert Einstein for
+                                    the photoelectric effect.</div>
+                            </td>
+                            <td><span class="pert-uq uq-A">UQ₁: entailment must stay HIGH</span></td>
+                        </tr>
+                        <tr>
+                            <td class="pert-name">P2 · Voice Change</td>
+                            <td>
+                                <div class="pert-ex-orig">Einstein was awarded… (passive)</div>
+                                <div class="pert-ex-mod">→ The Nobel Committee awarded Einstein the Physics prize in
+                                    1921. (active)</div>
+                            </td>
+                            <td><span class="pert-uq uq-A">UQ₁: tests NLI stability under syntax change</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pert-cat-header pch-A" style="margin-top:10px;">
+                    <div>
+                        <div class="pch-label">Category 2 · Attribution UQ₁</div>
+                        <div class="pch-title">Destroy Attribution — controlled semantic corruption</div>
+                    </div>
+                    <span class="pch-count">× 4</span>
+                </div>
+                <table class="pert-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Original → Modified</th>
+                            <th>UQ Signal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="pert-name">D1 · Negation</td>
+                            <td>
+                                <div class="pert-ex-mod">→ Einstein was NOT awarded the Nobel Prize in Physics in 1921.
+                                </div>
+                            </td>
+                            <td><span class="pert-uq uq-A">UQ₁: NLI entailment must DROP</span></td>
+                        </tr>
+                        <tr>
+                            <td class="pert-name">D2 · Factual Inversion</td>
+                            <td>
+                                <div class="pert-ex-mod">→ Einstein was awarded the Nobel Prize in Physics in 1921 for
+                                    the theory of relativity.</div>
+                            </td>
+                            <td><span class="pert-uq uq-A">UQ₁: subtle factual swap — harder for NLI</span></td>
+                        </tr>
+                        <tr>
+                            <td class="pert-name">D3 · Year Shift</td>
+                            <td>
+                                <div class="pert-ex-mod">→ Einstein was awarded the Nobel Prize in Physics in 1905.
+                                </div>
+                            </td>
+                            <td><span class="pert-uq uq-A">UQ₁: numerical error — tests NLI precision</span></td>
+                        </tr>
+                        <tr>
+                            <td class="pert-name">D4 · Entity Swap (destroy)</td>
+                            <td>
+                                <div class="pert-ex-mod">→ Niels Bohr was awarded the Nobel Prize in Physics in 1921 for
+                                    the photoelectric effect.</div>
+                            </td>
+                            <td><span class="pert-uq uq-A">UQ₁: wrong person — attribution should not hold</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- C-3: Retrieval -->
+            <div class="pert-section">
+                <div class="pert-cat-header pch-R">
+                    <div>
+                        <div class="pch-label">Category 3 · Retrieval UQ₂</div>
+                        <div class="pch-title">Specificity of Evidence — entity and scope variation</div>
+                    </div>
+                    <span class="pch-count">× 2</span>
+                </div>
+                <table class="pert-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Original → Modified</th>
+                            <th>UQ Signal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="pert-name">S1 · Entity Swap (probe retrieval)</td>
+                            <td>
+                                <div class="pert-ex-mod">→ Niels Bohr was awarded the Nobel Prize in Physics in 1921.
+                                </div>
+                            </td>
+                            <td><span class="pert-uq uq-R">UQ₂: different entity → different docs? Measures retrieval
+                                    sensitivity.</span></td>
+                        </tr>
+                        <tr>
+                            <td class="pert-name">S2 · Award Category Swap</td>
+                            <td>
+                                <div class="pert-ex-mod">→ Einstein was awarded the Nobel Prize in Chemistry in 1921.
+                                </div>
+                            </td>
+                            <td><span class="pert-uq uq-R">UQ₂: category change → tests if retrieval is
+                                    domain-sensitive</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- C-4, C-5: Hallucination -->
+            <div class="pert-section">
+                <div class="pert-cat-header pch-H">
+                    <div>
+                        <div class="pch-label">Category 4 · Hallucination UQ₃</div>
+                        <div class="pch-title">Breadth of Support — abstraction / generalization</div>
+                    </div>
+                    <span class="pch-count">× 2</span>
+                </div>
+                <table class="pert-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Original → Modified</th>
+                            <th>UQ Signal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="pert-name">B1 · Category Generalization</td>
+                            <td>
+                                <div class="pert-ex-mod">→ A physicist won the Nobel Prize in the early 20th century for
+                                    a contribution to quantum theory.</div>
+                            </td>
+                            <td><span class="pert-uq uq-H">UQ₃: broad version — does corpus still entail? Tests content
+                                    grounding breadth.</span></td>
+                        </tr>
+                        <tr>
+                            <td class="pert-name">B2 · Temporal Abstraction</td>
+                            <td>
+                                <div class="pert-ex-mod">→ Einstein was awarded the Nobel Prize in Physics in the 1920s.
+                                </div>
+                            </td>
+                            <td><span class="pert-uq uq-H">UQ₃: relaxed specificity — tests if content holds when
+                                    details are softened</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pert-cat-header pch-H" style="margin-top:10px;">
+                    <div>
+                        <div class="pch-label">Category 5 · Hallucination UQ₃</div>
+                        <div class="pch-title">Depth of Support — added causal/consequence specifics</div>
+                    </div>
+                    <span class="pch-count">× 2</span>
+                </div>
+                <table class="pert-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Original → Modified</th>
+                            <th>UQ Signal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="pert-name">E1 · Causal Detail</td>
+                            <td>
+                                <div class="pert-ex-mod">→ Einstein won the Nobel Prize in Physics in 1921 because his
+                                    1905 paper demonstrated that light consists of discrete quanta (photons).</div>
+                            </td>
+                            <td><span class="pert-uq uq-H">UQ₃: added specific detail — not entailed by corpus → likely
+                                    hallucinated</span></td>
+                        </tr>
+                        <tr>
+                            <td class="pert-name">E2 · Consequence Detail</td>
+                            <td>
+                                <div class="pert-ex-mod">→ Einstein won the Nobel Prize in 1921, which he donated to his
+                                    ex-wife Mileva Marić per their divorce agreement.</div>
+                            </td>
+                            <td><span class="pert-uq uq-H">UQ₃: consequence specifics — tests depth of corpus coverage
+                                    for generated content</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="callout call-gold">
+                <strong>Summary:</strong> 12 perturbations across 5 categories. Categories 1 & 3 probe Retrieval UQ₂.
+                Category 2 probes Attribution UQ₁. Categories 4 & 5 probe Hallucination UQ₃. Every perturbation maps to
+                exactly one UQ stage — making the attribution of uncertainty interpretable.
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+     SECTION 4: RETRIEVAL & NLI PIPELINE
+══════════════════════════════════════════════════ -->
+        <div class="sec">
+            <div class="sec-label">Section 04</div>
+            <h2>Retrieval & NLI Scoring — Shared Input to All UQ Stages</h2>
+
+            <p>
+                All 12 perturbations, plus the base claim, pass through the same retrieval and NLI pipeline. This
+                produces the raw scores consumed by UQ₁, UQ₂, and UQ₃.
+            </p>
+
+            <div class="pipeline-diagram">
+                <div class="pipe-row">
+                    <span class="pipe-box" style="background:#3f3f46;color:#e4e4e7;">Base Claim fi</span>
+                    <span class="pipe-arr">+</span>
+                    <span class="pipe-box" style="background:#3f3f46;color:#e4e4e7;">12 Perturbations {P1…E2}</span>
+                    <span class="pipe-arr">→</span>
+                    <span class="pipe-note">13 queries total per claim</span>
+                </div>
+                <div class="pipe-row" style="margin-top:10px;padding-left:20px;">
+                    <span style="color:#71717a">↓</span>
+                </div>
+                <div class="pipe-row">
+                    <span class="pipe-box" style="background:#1d3a1e;color:#86efac;">BM25 or Dense or Hybrid
+                        Retrieval</span>
+                    <span class="pipe-arr">→</span>
+                    <span class="pipe-note">top-k docs per query (k = 5)</span>
+                </div>
+                <div class="pipe-row" style="margin-top:4px;padding-left:20px;">
+                    <span style="color:#71717a">↓</span>
+                </div>
+                <div class="pipe-row">
+                    <span class="pipe-box" style="background:#1e1b3a;color:#c4b5fd;">NLI Cross-Encoder
+                        (DeBERTa-v3)</span>
+                    <span class="pipe-arr">→</span>
+                    <span class="pipe-note">P(entailment | doc, claim) per (doc, query) pair</span>
+                </div>
+                <div class="pipe-row" style="margin-top:4px;padding-left:20px;">
+                    <span style="color:#71717a">↓</span>
+                </div>
+                <div class="pipe-row">
+                    <span class="pipe-box" style="background:#3f3f46;color:#fcd34d;">Score(fi) = max entailment over
+                        top-k docs</span>
+                    <span class="pipe-arr">→</span>
+                    <span class="pipe-note">one attribution score per query</span>
+                </div>
+                <div class="pipe-row" style="margin-top:8px;color:#52525b;">
+                    ↓ &nbsp;{Score_base, Score_P1, Score_P2, …, Score_E2} → feeds UQ₁, UQ₂, UQ₃
+                </div>
+            </div>
+
+            <p>
+                The retrieval step can use <strong>BM25</strong> (lexical), <strong>dense</strong> (embedding-based), or
+                <strong>hybrid</strong> retrieval — the downstream UQ metrics are retrieval-method agnostic. All doc IDs
+                and scores are stored per query for use in RBO and Jaccard computation.
+            </p>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+     SECTION 5: UQ₁ — ATTRIBUTION
+══════════════════════════════════════════════════ -->
+        <div class="sec">
+            <div class="sec-label">Section 05</div>
+            <div class="uq-header">
+                <span class="uq-badge uq-A">UQ₁</span>
+                <span class="uq-title">Attribution Uncertainty — NLI Entailment Variance</span>
+            </div>
+
+            <div class="callout call-A">
+                <strong>Core question:</strong> Do retrieved documents consistently entail the claim across all surface
+                variants — and correctly fail to entail its corruptions?
+            </div>
+
+            <p>
+                Attribution score for a claim variant = <code>max P(entailment | doc, variant)</code> over the top-5
+                retrieved docs. Collected for all 13 variants (base + 12 perturbations).
+            </p>
+
+            <div class="code">
+                all_scores = [Score_base, Score_P1, Score_P2, ..., Score_E2] <span class="cm"># 13 values</span>
+
+                <span class="cm"># A well-attributed claim should show:</span>
+                <span class="cm"># HIGH entailment for Preserve perturbations (P1, P2)</span>
+                <span class="cm"># LOW entailment for Destroy perturbations (D1, D2, D3, D4)</span>
+                <span class="cm"># VARIABLE for specificity / breadth / depth perturbs</span>
+
+                UQ1_raw = Var(all_scores) <span class="cm"># high variance → unstable attribution</span>
+                UQ1_norm = UQ1_raw / <span class="nm">0.25</span> <span class="cm"># normalize: max theoretical Var =
+                    0.25</span>
+            </div>
+
+            <p>
+                High variance across all 13 scores indicates the NLI model cannot consistently find support — the claim
+                has no stable evidence anchor. Low variance with correctly high/low scores by category indicates stable
+                attribution.
+            </p>
+
+            <div class="callout call-gold">
+                <strong>Why NLI and not cosine similarity?</strong> Cosine similarity between embeddings measures topic
+                proximity. NLI entailment directly measures <em>"does this document support this claim?"</em> — which is
+                the definition of attribution. Cross-encoders (DeBERTa-v3) are significantly more precise than
+                bi-encoders for this task.
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+     SECTION 6: UQ₂ — RETRIEVAL
+══════════════════════════════════════════════════ -->
+        <div class="sec">
+            <div class="sec-label">Section 06</div>
+            <div class="uq-header">
+                <span class="uq-badge uq-R">UQ₂</span>
+                <span class="uq-title">Retrieval Uncertainty — Evidence Set Instability</span>
+            </div>
+
+            <div class="callout call-R">
+                <strong>Core question:</strong> Do perturbations retrieve the same documents as the original claim? A
+                claim may always score high on NLI — but from completely different documents across queries. That is
+                retrieval uncertainty.
+            </div>
+
+            <p>
+                For every perturbation query, we record the ordered list of retrieved document IDs. We compare each
+                perturbation's doc list against the base doc list using two metrics.
+            </p>
+
+            <div class="tech-box">
+                <h4>Metric A — Jaccard Similarity</h4>
+                <p>Set-level overlap. Does not consider ranking order. <code>J(A,B) = |A∩B| / |A∪B|</code>.</p>
+                <div class="code">
+                    A = {doc1, doc2, doc3, doc4, doc5} <span class="cm"># base retrieval</span>
+                    B = {doc1, doc6, doc3, doc9, doc5} <span class="cm"># perturbation retrieval</span>
+
+                    Jaccard(A,B) = |{doc1,doc3,doc5}| / |{1,2,3,4,5,6,9}| = <span class="nm">3/7 = 0.43</span>
+                </div>
+                <span class="verdict v-good">△ Stored as diagnostic — not primary signal</span>
+            </div>
+
+            <div class="tech-box">
+                <h4>Metric B — Rank-Biased Overlap (RBO, Webber et al., 2010) <span
+                        style="font-weight:400;font-size:12px;color:var(--dim)">— Primary Signal</span></h4>
+                <p>
+                    RBO assigns <strong>exponentially higher weight to top-ranked positions</strong>. Document #1
+                    matters far more than document #5. The persistence parameter <code>p = 0.9</code> gives ~86% weight
+                    to the top-10 positions. This reflects how attribution pipelines (and humans) actually use retrieved
+                    docs — top first.
+                </p>
+                <div class="code">
+                    <span class="cm"># RBO(S, T, p) = (1-p) × Σ_{d=1}^{∞} p^{d-1} × |S[:d] ∩ T[:d]| / d</span>
+
+                    S = [doc1, doc2, doc3, doc4, doc5] <span class="cm"># base (ranked)</span>
+                    T = [doc1, doc6, doc3, doc9, doc5] <span class="cm"># perturbation (ranked)</span>
+
+                    <span class="cm"># Depth-by-depth agreement:</span>
+                    d=1: {doc1}∩{doc1} = 1 → X_1 = <span class="nm">1.0</span> (same #1 doc — high weight!)
+                    d=2: {1,2}∩{1,6} = 1 → X_2 = <span class="nm">0.5</span>
+                    d=3: {1,2,3}∩{1,6,3} = 2 → X_3 = <span class="nm">0.67</span>
+                    <span class="cm"># ...etc.</span>
+
+                    RBO ≈ <span class="nm">0.88</span> <span class="cm"># high agreement — same top doc, mostly same
+                        set</span>
+                    Instability = <span class="nm">1 - 0.88 = 0.12</span> <span class="cm"># low retrieval
+                        uncertainty</span>
+                </div>
+            </div>
+
+            <p><strong>Why not Jaccard as the primary signal?</strong></p>
+            <table class="cmp">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Jaccard</th>
+                        <th>RBO (p=0.9)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Rank-sensitive</td>
+                        <td class="cross">✗ No — rank #1 and rank #5 treated equally</td>
+                        <td class="tick best-row">✓ Yes — top positions weighted exponentially more</td>
+                    </tr>
+                    <tr>
+                        <td>Reflects real retrieval usage</td>
+                        <td class="cross">✗ No — set only</td>
+                        <td class="tick best-row">✓ Yes — top docs matter most in attribution</td>
+                    </tr>
+                    <tr>
+                        <td>Captures ranking shift (same docs, different order)</td>
+                        <td class="cross">✗ Misses this</td>
+                        <td class="tick best-row">✓ Catches this — RBO drops when order changes</td>
+                    </tr>
+                    <tr>
+                        <td>Interpretability</td>
+                        <td class="tick">✓ Simpler</td>
+                        <td>Moderate</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout call-R">
+                <strong>Conclusion:</strong> Jaccard is stored as a secondary diagnostic. RBO is the primary retrieval
+                UQ signal. <strong>UQ₂ (Instability) = 1 − mean(RBO over all 12 perturbation queries).</strong>
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+     SECTION 7: UQ₃ — HALLUCINATION (CONTENT)
+══════════════════════════════════════════════════ -->
+        <div class="sec">
+            <div class="sec-label">Section 07</div>
+            <div class="uq-header">
+                <span class="uq-badge uq-H">UQ₃</span>
+                <span class="uq-title">Hallucination / Content Uncertainty — Two-Signal Approach</span>
+            </div>
+
+            <div class="callout call-H">
+                <strong>Core question:</strong> Did the LLM generate specific details that are not grounded in any
+                retrievable corpus passage? We use two complementary signals and average them.
+            </div>
+
+            <div class="tech-box">
+                <h4>Signal A — Retrieval Anchoring Bias (Attribution Drop)</h4>
+                <p>
+                    Measures whether the original claim phrasing enjoys disproportionately high support compared to its
+                    variants. If the base claim scores much higher than all its perturbations, the phrasing is
+                    over-anchored to specific corpus phrases — a potential hallucination indicator.
+                </p>
+                <div class="code">
+                    Score_base = NLI score for original claim
+                    Score_perturbs = [NLI scores for all 12 perturbations]
+
+                    Drop_raw = Score_base - mean(Score_perturbs)
+                    <span class="cm"># Normalize signed value to [0, 1]:</span>
+                    Signal_A = (Drop_raw - (-<span class="nm">1</span>)) / (<span class="nm">1</span> - (-<span
+                        class="nm">1</span>))
+
+                    <span class="cm"># High Signal_A → base claim has inflated, phrase-specific anchoring</span>
+                    <span class="cm"># This is simple to compute — direct byproduct of NLI scoring step</span>
+                </div>
+                <span class="verdict v-good">△ Indirect — measures retrieval bias, not direct hallucination</span>
+            </div>
+
+            <div class="tech-box">
+                <h4>Signal B — Specification Entailment Gap (SEG)</h4>
+                <p>
+                    Directly uses Categories 4 & 5 perturbations (breadth + depth). If the base claim is well-entailed
+                    by the corpus but its specification variants (E1, E2: added causal/consequence details) are
+                    <em>not</em> entailed — those specific details were likely hallucinated.
+                </p>
+                <div class="code">
+                    Score_base = NLI score for original claim
+                    Score_specs = mean(NLI score for [E1, E2]) <span class="cm"># depth/specification perturbs</span>
+
+                    SEG = Score_base - Score_specs <span class="cm"># how much do specs lose support?</span>
+                    Signal_B = normalize(SEG, min=-<span class="nm">1</span>, max=<span class="nm">1</span>)
+
+                    <span class="cm"># SEG ≈ 0 → specifics still entailed → content is grounded</span>
+                    <span class="cm"># SEG large → specifics not entailed → added details likely hallucinated</span>
+                </div>
+                <span class="verdict v-best">✓ More targeted — directly probes whether specific details are
+                    corpus-grounded</span>
+            </div>
+
+            <div class="callout call-H">
+                <strong>UQ₃ = (Signal_A + Signal_B) / 2</strong> — We average both signals. Signal A is simple and
+                provides a broad baseline. Signal B is more precise. Together they provide a richer hallucination
+                content UQ than either alone.
+            </div>
+
+            <div class="callout call-n" style="margin-top:10px;">
+                <strong>Open question for UQ₃:</strong> The current approach is corpus-dependent. If the corpus simply
+                does not contain a true specific detail, SEG will be high even though the claim is correct. A better
+                future solution may involve LLM self-consistency sampling (SelfCheckGPT, Manakul et al. 2023) —
+                repeatedly regenerating the answer at T&gt;0 and checking NLI consistency. This is noted as a stronger
+                alternative requiring further exploration.
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+     SECTION 8: UQ₄ — CLAIM EXTRACTION (OPEN)
+══════════════════════════════════════════════════ -->
+        <div class="sec">
+            <div class="sec-label">Section 08</div>
+            <div class="uq-header">
+                <span class="uq-badge uq-C">UQ₄</span>
+                <span class="uq-title">Claim Extraction Uncertainty — Open Problem</span>
+            </div>
+
+            <div class="callout call-q">
+                Research (HalluMeasure, 2024; FactScore, 2023) explicitly acknowledges that <strong>"the quality and
+                    consistency of claim decomposition directly impacts probe performance."</strong>
+            </div>
+
+            <p>
+                The way an LLM answer is split into atomic claims can introduce compounding errors into every downstream
+                stage. Key failure modes:
+            </p>
+
+            <ul style="margin:10px 0 10px 20px;font-size:12.5px;color:var(--dim);line-height:1.85;">
+                <li><strong>Over-splitting:</strong> One fact split into two weak claims, each harder to individually
+                    attribute.</li>
+                <li><strong>Under-splitting:</strong> Two distinct facts fused — forces multi-hop attribution that
+                    retrieval may not support.</li>
+                <li><strong>Coreference loss:</strong> "He won the prize" — when "he" = Einstein, the extracted claim
+                    loses its entity anchor.</li>
+                <li><strong>Boundary ambiguity:</strong> The LLM decomposer draws claim boundaries differently on each
+                    run — introducing non-determinism at the very start of the pipeline.</li>
+            </ul>
+
+            <div class="qmark-box">
+                <div class="qmark-head">? Open Question</div>
+                <p>
+                    This stage is a <strong>crucial source of uncertainty</strong> — yet a principled, computationally
+                    feasible measurement strategy is still being developed. One candidate: run claim extraction K=3
+                    times at T&gt;0 and measure NLI agreement across runs. However, the right formulation of this
+                    uncertainty score, and how to integrate it with UQ₁–UQ₃, remains an open problem in this work.
+                </p>
+                <p style="margin-top:8px;font-weight:600;">
+                    Why not include in the composite score? Because UQ₄ measures uncertainty in the measurement process
+                    itself — meta-uncertainty. Including it in U_attr would conflate two qualitatively different things:
+                    attribution uncertainty and pipeline reliability. It is better maintained as a separate diagnostic.
+                </p>
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+     SECTION 9: COMPOSITE SCORE
+══════════════════════════════════════════════════ -->
+        <div class="sec">
+            <div class="sec-label">Section 09</div>
+            <h2>Composite Uncertainty Score — U_attr</h2>
+
+            <p>
+                The composite score combines UQ₁, UQ₂, and UQ₃ with user-supplied weights. Weights are provided at
+                runtime — they are not hardcoded — reflecting the importance of each stage in the specific attribution
+                setup being evaluated.
+            </p>
+
+            <div class="formula">
+                <span class="cm"># Composite Attribution Uncertainty Score</span>
+                <span class="cm"># All three signals normalized to [0, 1] before weighting.</span>
+
+                <span class="kw">U_attr</span> = <span class="user">w₁</span> × <span class="nm">UQ1_norm</span> <span
+                    class="cm">← Attribution: NLI variance across 13 variants</span>
+                + <span class="user">w₂</span> × <span class="nm">UQ2_norm</span> <span class="cm">← Retrieval: 1 −
+                    mean(RBO over 12 perturb queries)</span>
+                + <span class="user">w₃</span> × <span class="nm">UQ3_norm</span> <span class="cm">← Hallucination:
+                    avg(Signal_A, Signal_B)</span>
+
+                <span class="cm"># Constraint: w₁ + w₂ + w₃ = 1.0</span>
+                <span class="cm"># Weights are provided by the user at runtime.</span>
+                <span class="cm"># Suggested starting point: w₁=0.40, w₂=0.35, w₃=0.25</span>
+
+                <span class="cm"># UQ₄ (Claim Extraction) is stored as a SEPARATE DIAGNOSTIC.</span>
+                <span class="cm"># It does NOT enter U_attr. Report it alongside U_attr for pipeline
+                    transparency.</span>
+
+                <span class="cm"># Current implementation: UQ₁, UQ₂, UQ₃ only.</span>
+                <span class="cm"># UQ₄ scoring methodology is under development.</span>
+            </div>
+
+            <div class="callout call-n">
+                <strong>Threshold interpretation (suggested):</strong><br />
+                U_attr &lt; 0.2 → <strong>STABLE</strong> attribution &nbsp;|&nbsp;
+                0.2 ≤ U_attr &lt; 0.5 → <strong>MODERATE</strong> uncertainty &nbsp;|&nbsp;
+                U_attr ≥ 0.5 → <strong>HIGH</strong> uncertainty
+            </div>
+        </div>
+
+
+        <!-- ══════════════════════════════════════════════════
+     SECTION 10: COVERAGE CHECK
+══════════════════════════════════════════════════ -->
+        <div class="sec">
+            <div class="sec-label">Section 10</div>
+            <h2>Coverage Check — Are We Quantifying All Parts of Attribution Uncertainty?</h2>
+
+            <table class="cov-table">
+                <thead>
+                    <tr>
+                        <th>Stage</th>
+                        <th>Source of Uncertainty</th>
+                        <th>Technique</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="row-A">
+                        <td class="stage-cell">UQ₁ · Attribution</td>
+                        <td style="color:#1e3a8a">Evidence does not consistently entail the claim across surface
+                            variants of the same fact.</td>
+                        <td style="color:#1e3a8a">NLI entailment variance (cross-encoder DeBERTa-v3) over 13 variants.
+                        </td>
+                        <td><span class="cov-icon">✅</span> Implemented. Best black-box method available.</td>
+                    </tr>
+                    <tr class="row-R">
+                        <td class="stage-cell">UQ₂ · Retrieval</td>
+                        <td style="color:#064e3b">Retrieved document identity shifts across perturbations — no stable
+                            evidence anchor.</td>
+                        <td style="color:#064e3b">RBO (primary) + Jaccard (diagnostic). Instability = 1 − mean(RBO).
+                        </td>
+                        <td><span class="cov-icon">✅</span> Implemented. RBO is theoretically sound (Webber, 2010).</td>
+                    </tr>
+                    <tr class="row-H">
+                        <td class="stage-cell">UQ₃ · Hallucination (Content)</td>
+                        <td style="color:#7f1d1d">LLM generates specific details not grounded in retrievable corpus
+                            evidence.</td>
+                        <td style="color:#7f1d1d">Avg(Retrieval Anchoring Bias, Specification Entailment Gap).
+                            Two-signal approach.</td>
+                        <td><span class="cov-icon">⚠️</span> Implemented. Better solution still sought — see open
+                            question in §07.</td>
+                    </tr>
+                    <tr class="row-C">
+                        <td class="stage-cell">UQ₄ · Claim Extraction</td>
+                        <td style="color:#4c1d95">Atomic decomposition is unstable — different runs produce different
+                            claim boundaries, propagating error downstream.</td>
+                        <td style="color:#4c1d95">Not yet implemented. Candidate: multi-run NLI agreement.</td>
+                        <td><span class="cov-icon">❓</span> Open problem. Critical stage — best kept as separate
+                            diagnostic, not in U_attr.</td>
+                    </tr>
+                    <tr class="row-X">
+                        <td class="stage-cell" style="color:#92400e;">Corpus Quality</td>
+                        <td style="color:#78350f;">Corpus may not contain evidence for a true claim — causing false high
+                            uncertainty scores.</td>
+                        <td style="color:#78350f;">Not measurable within the current pipeline scope.</td>
+                        <td><span class="cov-icon">⚪</span> Acknowledged limitation. Corpus completeness is an external
+                            assumption — cannot be surfaced as a UQ signal without a reference corpus.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout call-gold" style="margin-top:18px;">
+                <strong>Overall assessment:</strong> The pipeline covers three of four core stages with principled,
+                implementable techniques. UQ₄ (Claim Extraction) remains the most important open problem — its impact
+                propagates through every downstream measurement. Corpus quality is an acknowledged external assumption.
+                UQ₃ (Hallucination) works but relies on corpus coverage; a self-consistency-based approach would
+                strengthen it.
+            </div>
+
+            <div class="footnote">
+                References: Webber et al. (2010) — Rank-Biased Overlap, ACM TOIS. &nbsp;|&nbsp;
+                Min et al. (2023) — FactScore. &nbsp;|&nbsp;
+                Manakul et al. (2023) — SelfCheckGPT. &nbsp;|&nbsp;
+                HalluMeasure (2024). &nbsp;|&nbsp;
+                Fadeeva et al. (2024) — CCP for black-box UQ.
+            </div>
+        </div>
+
+    </div><!-- /wrap -->
+</body>
+
+</html>
