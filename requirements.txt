@@ -7,3 +7,5 @@ pandas
 rank-bm25
 datasets
 tqdm
+transformers
+torch
